@@ -144,12 +144,66 @@ Notas:
 
 ## How to test
 
-Desde `backend/`:
+Todos los tests viven en el backend.
+
+### 1) Instalar dependencias
+
+```bash
+cd backend
+npm install
+```
+
+### 2) Ejecutar tests unitarios
 
 ```bash
 npm run test
+```
+
+Solo los tests del use case de ordenes (incluye los 3 requeridos):
+
+```bash
+npm test -- create-order.use-case.spec.ts
+```
+
+### 3) Ejecutar tests e2e
+
+```bash
 npm run test:e2e
 ```
+
+Solo la prueba e2e de idempotencia HTTP:
+
+```bash
+npm run test:e2e -- test/orders-idempotency.e2e-spec.ts
+```
+
+## Test list (challenge evidence)
+
+### Required tests
+
+1. Pricing / service fee logic
+2. Idempotent `POST /orders`
+3. Modifier max validation
+
+Archivo:
+
+- `backend/src/orders/application/use-cases/create-order.use-case.spec.ts`
+
+Casos implementados:
+
+- `applies server-side pricing and service fee logic`
+- `is idempotent for repeated POST /orders with same key and same payload`
+- `rejects modifier selections above maxSelect`
+
+### Extra proof (HTTP e2e)
+
+Archivo:
+
+- `backend/test/orders-idempotency.e2e-spec.ts`
+
+Caso implementado:
+
+- `returns same orderId for repeated POST /orders with same idempotency key and payload`
 
 ## Seed / sample data
 
