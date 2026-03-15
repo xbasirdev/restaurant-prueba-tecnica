@@ -1,5 +1,6 @@
 import { config as dotenvConfig } from 'dotenv';
 import { connect, connection, disconnect } from 'mongoose';
+import { sanitizeForLogs } from '../../../shared/logging/sanitize-for-logs';
 
 dotenvConfig({ path: '.env.local' });
 dotenvConfig({ path: '.env' });
@@ -180,7 +181,7 @@ run()
   })
   .catch(async (error: unknown) => {
     // eslint-disable-next-line no-console
-    console.error('Menu seed migration failed:', error);
+    console.error('Menu seed migration failed:', sanitizeForLogs(error));
     await disconnect();
     process.exit(1);
   });

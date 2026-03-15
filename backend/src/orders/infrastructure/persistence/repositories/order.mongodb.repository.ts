@@ -60,6 +60,49 @@ export class OrderMongoDbRepository implements OrderRepository {
     };
   }
 
+  async findRecent(page: number, pageSize: number): Promise<Order[]> {
+    const safePage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+    const safePageSize = Number.isFinite(pageSize)
+      ? Math.min(Math.max(Math.floor(pageSize), 1), 50)
+      : 20;
+
+    const documents = await this.orderModel
+      .find({})
+      .sort({ createdAt: -1 })
+      .skip((safePage - 1) * safePageSize)
+      .limit(safePageSize)
+      .lean()
+      .exec();
+
+    return documents.map((document) => {
+      const typedDocument = document as typeof document & {
+        createdAt?: Date;
+        updatedAt?: Date;
+      };
+
+      const createdAt =
+        typedDocument.createdAt instanceof Date
+          ? typedDocument.createdAt.toISOString()
+          : new Date().toISOString();
+      const updatedAt =
+        typedDocument.updatedAt instanceof Date
+          ? typedDocument.updatedAt.toISOString()
+          : createdAt;
+
+      return {
+        orderId: document.orderId,
+        userId: document.userId,
+        status: document.status,
+        items: document.items,
+        totals: document.totals,
+        idempotencyKey: document.idempotencyKey,
+        correlationId: document.correlationId,
+        createdAt,
+        updatedAt,
+      };
+    });
+  }
+
   async updateStatus(orderId: string, status: OrderStatus): Promise<void> {
     await this.orderModel
       .updateOne({ orderId }, { $set: { status, updatedAt: new Date() } })

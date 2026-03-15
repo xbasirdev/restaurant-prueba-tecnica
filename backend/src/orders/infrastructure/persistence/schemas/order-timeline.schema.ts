@@ -1,6 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
+const MAX_TIMELINE_PAYLOAD_BYTES = 16 * 1024;
+
+function isTimelinePayloadWithinLimit(payload: Record<string, unknown>): boolean {
+  return Buffer.byteLength(JSON.stringify(payload), 'utf8') <= MAX_TIMELINE_PAYLOAD_BYTES;
+}
+
 @Schema({ collection: 'order_timeline_events', timestamps: false })
 export class OrderTimelineDocument {
   @Prop({ required: true, unique: true })
@@ -31,7 +37,14 @@ export class OrderTimelineDocument {
   @Prop({ required: true })
   correlationId!: string;
 
-  @Prop({ type: Object, required: true })
+  @Prop({
+    type: Object,
+    required: true,
+    validate: {
+      validator: isTimelinePayloadWithinLimit,
+      message: 'Timeline event payload exceeds 16KB',
+    },
+  })
   payload!: Record<string, unknown>;
 }
 

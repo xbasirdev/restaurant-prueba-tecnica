@@ -5,6 +5,7 @@ import { RedisModule } from '../infrastructure/redis/redis.module';
 import { MenuItemDocument, MenuItemSchema } from '../menu/infrastructure/persistence/menu.schema';
 import { CreateOrderUseCase } from './application/use-cases/create-order.use-case';
 import { GetOrderUseCase } from './application/use-cases/get-order.use-case';
+import { ListOrdersUseCase } from './application/use-cases/list-orders.use-case';
 import { OrderCreatedWorker } from './application/workers/order-created.worker';
 import { IDEMPOTENCY_REPOSITORY } from './application/ports/idempotency.repository';
 import { MENU_CATALOG_REPOSITORY } from './application/ports/menu-catalog.repository';
@@ -42,6 +43,7 @@ import { OrdersController } from './presentation/orders.controller';
   providers: [
     CreateOrderUseCase,
     GetOrderUseCase,
+    ListOrdersUseCase,
     OrderCreatedWorker,
     IdempotencyMongoDbRepository,
     IdempotencyRedisRepository,

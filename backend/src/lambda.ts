@@ -12,6 +12,10 @@ let cachedHandler: LambdaHandler | null = null;
 
 async function bootstrapServer(): Promise<LambdaHandler> {
   const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  });
   await app.init();
 
   const expressApp = app.getHttpAdapter().getInstance();
