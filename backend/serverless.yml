@@ -1,0 +1,47 @@
+service: restaurant-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'local'}
+  region: us-east-1
+  timeout: 29
+  memorySize: 512
+  environment:
+    NODE_ENV: ${env:NODE_ENV, 'development'}
+    PORT: ${env:PORT, '3000'}
+    ENABLE_DATABASE: ${env:ENABLE_DATABASE, 'true'}
+    ENABLE_REDIS: ${env:ENABLE_REDIS, 'false'}
+    REDIS_URL: ${env:REDIS_URL, 'redis://localhost:6379'}
+    MONGODB_URI: ${env:MONGODB_URI, 'mongodb://root:root@localhost:27017/restaurant?authSource=admin'}
+    MONGODB_DB_NAME: ${env:MONGODB_DB_NAME, 'restaurant'}
+
+plugins:
+  - serverless-offline
+
+functions:
+  api:
+    handler: dist/lambda.handler
+    events:
+      - httpApi:
+          method: ANY
+          path: /
+      - httpApi:
+          method: ANY
+          path: /{proxy+}
+
+custom:
+  serverless-offline:
+    httpPort: ${env:PORT, 3000}
+    host: 0.0.0.0
+
+package:
+  patterns:
+    - dist/**
+    - node_modules/**
+    - package.json
+    - package-lock.json
+    - '!src/**'
+    - '!test/**'
