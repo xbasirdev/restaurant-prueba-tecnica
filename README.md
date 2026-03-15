@@ -1,19 +1,17 @@
 # Restaurant Ordering API + Timeline Viewer
+## Prueba Realizada por Xavier Basir
 
 Repositorio dividido en dos apps:
 
 - `backend/`: API NestJS (menu, orders, timeline).
 - `frontend/`: UI React + Vite para consumir la API.
 
-Este README permite levantar todo localmente desde una maquina limpia en menos de 10 minutos.
 
 ## Prerequisites
 
 - Node.js 20.x (LTS recomendado)
 - npm 10+
-- Docker Desktop (para dependencias locales: MongoDB y Redis)
-
-
+- Docker (para dependencias locales: MongoDB y Redis)
 
 ## Environment setup
 
@@ -73,8 +71,8 @@ Variables (`frontend/.env`):
 Orden recomendado de arranque:
 
 1. Dependencias locales (MongoDB + Redis con Docker)
-2. Backend API (Nest dev)
-3. Seed de menu
+2. Backend API (NestJS)
+3. Seed para la base de datos (menu)
 4. Frontend UI
 
 #### 1) Levantar dependencias locales
@@ -97,12 +95,14 @@ npm run start:dev
 
 #### 3) Cargar seed de menu
 
+El seed del menu carga 7 productos (incluyendo productos personalizables con grupos de modificadores).
 En otra terminal:
 
 ```bash
 cd backend
 npm run db:migrate:menu
 ```
+
 
 #### 4) Levantar frontend manualmente
 
@@ -135,7 +135,7 @@ Notas:
 - Backend API: `3000`
 - Frontend Vite: `5173`
 
-## API quick check
+## Endpoints disponibles en API
 
 - Menu: `GET http://localhost:3000/menu`
 - Crear orden: `POST http://localhost:3000/orders` (con header `Idempotency-Key`)
@@ -159,7 +159,7 @@ npm install
 npm run test
 ```
 
-Solo los tests del use case de ordenes (incluye los 3 requeridos):
+Solo los tests del use case de ordenes:
 
 ```bash
 npm test -- create-order.use-case.spec.ts
@@ -177,9 +177,9 @@ Solo la prueba e2e de idempotencia HTTP:
 npm run test:e2e -- test/orders-idempotency.e2e-spec.ts
 ```
 
-## Test list (challenge evidence)
+## Test list 
 
-### Required tests
+### Pruebas requeridas
 
 1. Pricing / service fee logic
 2. Idempotent `POST /orders`
@@ -205,15 +205,5 @@ Caso implementado:
 
 - `returns same orderId for repeated POST /orders with same idempotency key and payload`
 
-## Seed / sample data
-
-El seed del menu carga 7 productos (incluyendo productos personalizables con grupos de modificadores).
-
-Comando:
-
-```bash
-cd backend
-npm run db:migrate:menu
-```
 
 Nota: el backend incluye `serverless.yml` y soporte de `serverless offline`.
